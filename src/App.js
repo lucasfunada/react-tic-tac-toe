@@ -27,7 +27,8 @@ function Board({ xIsNext, squares, onPlay }) {
       nextSquares[i] = "X";
     else
       nextSquares[i] = "O";
-    onPlay(nextSquares);
+    const coordinates = checkCoordinates(i);
+    onPlay(nextSquares, coordinates);
   }
 
   const winner = calculateWinner(squares);
@@ -41,11 +42,11 @@ function Board({ xIsNext, squares, onPlay }) {
 
 
   const createSquares = [];
-  createSquares.push(<div className="status">{status}</div>);
+  createSquares.push(<div key={10000} className="status">{status}</div>);
   for(let i = 0; i < 3; i++) {
-    createSquares.push(<div className="board-row"></div>);
+    createSquares.push(<div key={10001+i} className="board-row"></div>);
     for(let j = 0; j < 3; j++){
-      createSquares.push(<Square value={squares[j+i*3]} onSquareClick={() => handleClick(j+i*3)} winObj = {winner} squareIndex={j+i*3} />)
+      createSquares.push(<Square key={j+i*3} value={squares[j+i*3]} onSquareClick={() => handleClick(j+i*3)} winObj = {winner} squareIndex={j+i*3} />)
     }
   }
 
@@ -53,14 +54,14 @@ function Board({ xIsNext, squares, onPlay }) {
 }
 
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [history, setHistory] = useState([{squares: Array(9).fill(null), coordinates: ""}]);
   const [currentMove, setCurrentMove] = useState(0);
   const [reverse, setReverse] = useState(false);
   const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
+  const currentSquares = history[currentMove].squares;
 
-  function handlePlay(nextSquares) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+  function handlePlay(nextSquares, xy) {
+    const nextHistory = [...history.slice(0, currentMove + 1), { squares: nextSquares, coordinates: xy }];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
   }
@@ -69,10 +70,10 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
-  const moves = history.map((squares, move) => {
+  const moves = history.map((history, move) => {
     let description;
     if (move > 0) {
-      description = "Go to move #" + move;
+      description = `Go to move #${move} (${history.coordinates})`;
     }
     else {
       description = "Go to game start";
@@ -139,3 +140,24 @@ function checkDraw(squares) {
       return 0;
   return 1;
 }
+
+function checkCoordinates(i) {
+  if (i <= 2)
+    return `1, ${i+1}`;
+  else if (i <= 5)
+    return `2, ${i-2}`;
+  else
+    return `3, ${i-5}`;
+}
+
+/*
+  formulario cadastro pessoa
+
+  nome
+  email
+  nascimento
+  cpf
+  endereço
+    rua, cidade, estado, numero casa
+  
+*/
