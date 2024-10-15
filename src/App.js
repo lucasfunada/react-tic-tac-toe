@@ -149,15 +149,3 @@ function checkCoordinates(i) {
   else
     return `3, ${i-5}`;
 }
-
-/*
-  formulario cadastro pessoa
-
-  nome
-  email
-  nascimento
-  cpf
-  endereço
-    rua, cidade, estado, numero casa
-  
-*/
